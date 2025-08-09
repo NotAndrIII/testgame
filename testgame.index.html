@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Springendes Spiel</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #222;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="400"></canvas>
+
+<script>
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Spieler Eigenschaften
+  const player = {
+    x: 100,
+    y: 300,
+    width: 50,
+    height: 50,
+    color: 'skyblue',
+    velocityY: 0,
+    jumpForce: -15,
+    gravity: 0.8,
+    grounded: true
+  };
+
+  // Tasteneingabe
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && player.grounded) {
+      player.velocityY = player.jumpForce;
+      player.grounded = false;
+    }
+  });
+
+  // Spiellogik
+  function update() {
+    // Schwerkraft anwenden
+    player.velocityY += player.gravity;
+    player.y += player.velocityY;
+
+    // Boden prüfen
+    if (player.y + player.height >= canvas.height) {
+      player.y = canvas.height - player.height;
+      player.velocityY = 0;
+      player.grounded = true;
+    }
+  }
+
+  // Zeichnen
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Boden
+    ctx.fillStyle = '#333';
+    ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+
+    // Spieler
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+  }
+
+  // Spielschleife
+  function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+
+  gameLoop();
+</script>
+</body>
+</html>
